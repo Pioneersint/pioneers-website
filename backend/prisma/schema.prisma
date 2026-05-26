@@ -1,0 +1,364 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  nameAr        String?   @map("name_ar")
+  phone         String?
+  avatar        String?
+  role          UserRole  @default(CLIENT)
+  status        UserStatus @default(ACTIVE)
+  
+  companyName   String?    @map("company_name")
+  companyNameAr String?    @map("company_name_ar")
+  jobTitle      String?    @map("job_title")
+  industry      String?
+  
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  lastLogin     DateTime?  @map("last_login")
+  
+  subscription  Subscription?
+  enrollments   Enrollment[]
+  certificates  UserCertificate[]
+  aiChats       AIChat[]
+  activityLogs  ActivityLog[]
+  
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model Subscription {
+  id              String             @id @default(cuid())
+  userId          String             @unique @map("user_id")
+  plan            SubscriptionPlan   @default(FREE)
+  status          SubscriptionStatus @default(ACTIVE)
+  
+  gatewayCustomerId     String?    @map("gateway_customer_id")
+  gatewaySubscriptionId String?    @map("gateway_subscription_id")
+  
+  amount          Decimal?   @db.Decimal(10, 2)
+  currency        String     @default("JOD")
+  startedAt       DateTime   @default(now()) @map("started_at")
+  currentPeriodStart DateTime @map("current_period_start")
+  currentPeriodEnd   DateTime @map("current_period_end")
+  
+  hasAIAccess     Boolean    @default(false) @map("has_ai_access")
+  hasCertificates Boolean    @default(false) @map("has_certificates")
+  hasLMSAccess    Boolean    @default(false) @map("has_lms_access")
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices Invoice[]
+  
+  @@map("subscriptions")
+}
+
+enum SubscriptionPlan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  PENDING
+}
+
+model Invoice {
+  id              String        @id @default(cuid())
+  subscriptionId  String        @map("subscription_id")
+  amount          Decimal       @db.Decimal(10, 2)
+  currency        String        @default("JOD")
+  status          InvoiceStatus @default(PENDING)
+  gatewayInvoiceId String?      @map("gateway_invoice_id")
+  paidAt          DateTime?     @map("paid_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  @@map("invoices")
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model Course {
+  id            String   @id @default(cuid())
+  title         String
+  titleAr       String?  @map("title_ar")
+  description   String   @db.Text
+  descriptionAr String?  @db.Text @map("description_ar")
+  thumbnail     String?
+  category      CourseCategory @default(ISO)
+  level         CourseLevel    @default(BEGINNER)
+  isFree        Boolean   @default(true) @map("is_free")
+  price         Decimal?  @db.Decimal(10, 2)
+  isPublished   Boolean   @default(false) @map("is_published")
+  hasCertificate Boolean  @default(false) @map("has_certificate")
+  slug          String    @unique
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  modules       Module[]
+  enrollments   Enrollment[]
+  
+  @@map("courses")
+}
+
+enum CourseCategory {
+  ISO
+  ESG
+  GOVERNANCE
+  RISK
+  TRANSFORMATION
+  LEADERSHIP
+  GENERAL
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  courseId    String   @map("course_id")
+  title       String
+  titleAr     String?  @map("title_ar")
+  description String?  @db.Text
+  order       Int      @default(0)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons     Lesson[]
+  
+  @@map("modules")
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  moduleId    String   @map("module_id")
+  title       String
+  titleAr     String?  @map("title_ar")
+  content     String?  @db.Text
+  videoUrl    String?  @map("video_url")
+  duration    Int?
+  order       Int      @default(0)
+  module      Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress    LessonProgress[]
+  
+  @@map("lessons")
+}
+
+model Enrollment {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  courseId    String    @map("course_id")
+  progress    Float     @default(0)
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+model LessonProgress {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  lessonId    String    @map("lesson_id")
+  completed   Boolean   @default(false)
+  watchedSeconds Int   @default(0) @map("watched_seconds")
+  completedAt DateTime? @map("completed_at")
+  
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, lessonId])
+  @@map("lesson_progress")
+}
+
+model Certificate {
+  id              String            @id @default(cuid())
+  certificateId   String            @unique @map("certificate_id")
+  clientName      String            @map("client_name")
+  clientEmail     String?           @map("client_email")
+  certificateType CertificateType   @map("certificate_type")
+  issueDate       DateTime          @map("issue_date")
+  expiryDate      DateTime?         @map("expiry_date")
+  status          CertificateStatus @default(ACTIVE)
+  referenceNumber String?           @map("reference_number")
+  notes           String?           @db.Text
+  
+  userCertificates UserCertificate[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  
+  @@map("certificates")
+}
+
+enum CertificateType {
+  ISO_9001
+  ISO_14001
+  ISO_45001
+  ISO_21001
+  ISO_22000
+  ISO_27001
+  ISO_31000
+  ISO_37301
+  TRAINING
+}
+
+enum CertificateStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
+}
+
+model UserCertificate {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  certificateId String   @map("certificate_id")
+  issuedAt      DateTime @default(now()) @map("issued_at")
+  pdfUrl        String?  @map("pdf_url")
+  
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  certificate Certificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, certificateId])
+  @@map("user_certificates")
+}
+
+model Article {
+  id              String          @id @default(cuid())
+  title           String
+  titleAr         String?         @map("title_ar")
+  slug            String          @unique
+  excerpt         String?         @db.Text
+  excerptAr       String?         @db.Text @map("excerpt_ar")
+  content         String          @db.Text
+  contentAr       String?         @db.Text @map("content_ar")
+  featuredImage   String?         @map("featured_image")
+  category        ArticleCategory
+  contentCluster  ContentCluster  @map("content_cluster")
+  metaTitle       String?         @map("meta_title")
+  metaDescription String?         @map("meta_description")
+  keywords        String[]
+  internalLinks   String[]        @map("internal_links")
+  authorName      String          @map("author_name")
+  status          ArticleStatus   @default(DRAFT)
+  publishedAt     DateTime?       @map("published_at")
+  isAiGenerated   Boolean         @default(false) @map("is_ai_generated")
+  seoScore        Int?            @map("seo_score")
+  views           Int             @default(0)
+  readTime        Int             @default(5) @map("read_time")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  
+  @@map("articles")
+}
+
+enum ArticleCategory {
+  ISO_STANDARDS
+  ESG_SUSTAINABILITY
+  GOVERNANCE
+  RISK_MANAGEMENT
+  TRANSFORMATION
+  LEADERSHIP
+  CASE_STUDY
+  INDUSTRY_INSIGHT
+}
+
+enum ContentCluster {
+  ISO_9001_CLUSTER
+  ISO_14001_CLUSTER
+  ESG_CLUSTER
+  GOVERNANCE_CLUSTER
+  RISK_CLUSTER
+  TRANSFORMATION_CLUSTER
+  GENERAL
+}
+
+enum ArticleStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+}
+
+model AIChat {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  title     String    @default("New Chat")
+  messages  ChatMessage[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("ai_chats")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  chatId    String   @map("chat_id")
+  role      String
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  chat AIChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  
+  @@map("chat_messages")
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String?  @map("user_id")
+  action      String
+  entityType  String   @map("entity_type")
+  entityId    String?  @map("entity_id")
+  metadata    Json?
+  ipAddress   String?  @map("ip_address")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@map("activity_logs")
+}
+
+model VerificationLog {
+  id              String   @id @default(cuid())
+  certificateId   String   @map("certificate_id")
+  status          String
+  ipAddress       String?  @map("ip_address")
+  createdAt       DateTime @default(now()) @map("created_at")
+  
+  @@map("verification_logs")
+}
