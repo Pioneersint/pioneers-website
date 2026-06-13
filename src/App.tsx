@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import { LanguageProvider } from '@/context/LanguageContext';
@@ -8,6 +8,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import SEO, { organizationSchema, serviceSchema } from '@/components/SEO';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import { getSubdomainType } from '@/lib/subdomain';
 import ChatbotAI from '@/components/ChatbotAI';
 import StickyMobileCTA from '@/components/StickyMobileCTA';
 
@@ -58,6 +59,11 @@ import AdminUsers from '@/pages/AdminUsers';
 import AdminCertificates from '@/pages/AdminCertificates';
 import AdminCourses from '@/pages/AdminCourses';
 
+// Subdomain sites
+import NJPIMacsSite from '@/pages/subdomains/NJPIMacsSite';
+import ConsultingSite from '@/pages/subdomains/ConsultingSite';
+import HCCSSite from '@/pages/subdomains/HCCSSite';
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
@@ -75,7 +81,36 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
+function SubdomainRouter() {
+  const subdomain = getSubdomainType();
+
+  if (subdomain === 'njpi-macs') return <NJPIMacsSite />;
+  if (subdomain === 'consulting') return <ConsultingSite />;
+  if (subdomain === 'hccs') return <HCCSSite />;
+
+  return null; // Not a subdomain, render main site
+}
+
 export default function App() {
+  const [subdomain, setSubdomain] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSubdomain(getSubdomainType());
+  }, []);
+
+  // If we're on a subdomain, render the subdomain site directly
+  if (subdomain) {
+    return (
+      <LanguageProvider>
+        <AuthProvider>
+          <CartProvider>
+            <SubdomainRouter />
+          </CartProvider>
+        </AuthProvider>
+      </LanguageProvider>
+    );
+  }
+
   return (
     <LanguageProvider>
       <AuthProvider>
