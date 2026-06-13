@@ -9,6 +9,7 @@ import {
   ShieldCheck, Leaf, Search, RefreshCw, Zap, Cpu
 } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
+import { useLanguage } from '@/context/LanguageContext';
 
 const navItems = [
   {
@@ -113,12 +114,13 @@ function CartButton() {
 }
 
 export default function Header() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { language, toggleLanguage } = useLanguage();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const isAr = i18n.language === 'ar';
+  const isAr = language === 'ar';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -128,10 +130,8 @@ export default function Header() {
 
   useEffect(() => { setMobileOpen(false); setOpenDropdown(null); }, [location.pathname]);
 
-  const toggleLang = () => {
-    const next = isAr ? 'en' : 'ar';
-    i18n.changeLanguage(next);
-    document.dir = next === 'ar' ? 'rtl' : 'ltr';
+  const handleToggleLang = () => {
+    toggleLanguage();
   };
 
   return (
@@ -202,10 +202,18 @@ export default function Header() {
               {isAr ? 'احجز استشارة' : 'Book Consultation'}
             </Link>
 
-            {/* Language */}
-            <button onClick={toggleLang} className="flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+            {/* Language - shows current language, click to toggle */}
+            <button
+              onClick={handleToggleLang}
+              className={`flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                isAr
+                  ? 'text-emerald bg-emerald/10 hover:bg-emerald/20'
+                  : 'text-slate-600 hover:bg-slate-50'
+              }`}
+              title={isAr ? 'Click to switch to English' : 'Click to switch to Arabic / انقر للتبديل إلى العربية'}
+            >
               <Globe className="w-4 h-4" />
-              <span>{isAr ? 'EN' : 'AR'}</span>
+              <span>{isAr ? 'AR' : 'EN'}</span>
             </button>
 
             {/* Mobile menu */}

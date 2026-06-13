@@ -2,13 +2,13 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CreditCard, Building2, ArrowLeft, Check, Lock, Globe, ShieldCheck, ShoppingCart, Loader2, AlertCircle, FileText, GraduationCap, Trash2 } from 'lucide-react';
-import { initiatePayTabsPayment } from '@/lib/paytabs';
 import { pdfMaterials } from '@/pages/PDFStore';
 import { useCart } from '@/hooks/useCart';
 import { allCoursesData } from '@/pages/LMS';
 import { isValidEmail, getEmailError, getPhoneError, getNameError } from '@/lib/validation';
 import CountryDropdown from '@/components/shared/CountryDropdown';
 import OTPVerification from '@/components/shared/OTPVerification';
+import { trpc } from '@/providers/trpc';
 
 interface CheckoutState {
   items?: string[];
@@ -143,6 +143,19 @@ export default function Checkout() {
     return { totalAmount: 0, orderItems: [] as { name: string; detail: string; price: number }[], orderDescription: 'Pioneers International Order' };
   }, [state, items]);
 
+  // ── tRPC mutation for PayTabs ──
+  const paytabsMutation = trpc.paytabs.createPayment.useMutation({
+    onSuccess: (data) => {
+      clearCart();
+      localStorage.setItem('pendingOrder', JSON.stringify({ cartId: data.tranRef, amount: totalAmount, method: 'paytabs', items: orderItems.map(i => i.name), timestamp: Date.now() }));
+      window.location.href = data.redirectUrl;
+    },
+    onError: (err) => {
+      setLoading(false);
+      setGeneralError(err.message || 'Could not connect to PayTabs payment gateway. Please try PayPal or Bank Transfer as an alternative.');
+    },
+  });
+
   // ── Handle PayTabs checkout ──
   const handlePayTabsCheckout = async () => {
     if (!validateAll()) return;
@@ -151,23 +164,19 @@ export default function Checkout() {
     setLoading(true);
     setGeneralError('');
 
-    try {
-      const cartId = `PI-${Date.now()}`;
-      const redirectUrl = await initiatePayTabsPayment({
-        amount: totalAmount, cartId, description: orderDescription,
-        customerName: formData.name, customerEmail: formData.email, customerPhone: formData.phone,
-      });
+    const cartId = `PI-${Date.now()}`;
+    const returnUrl = `${window.location.origin}/#/checkout/success`;
 
-      if (redirectUrl) {
-        clearCart();
-        localStorage.setItem('pendingOrder', JSON.stringify({ cartId, amount: totalAmount, method: 'paytabs', items: orderItems.map(i => i.name), timestamp: Date.now() }));
-        // Redirect to PayTabs secure payment page
-        window.location.href = redirectUrl;
-      }
-    } catch (err: any) {
-      setLoading(false);
-      setGeneralError(err.message || 'Could not connect to PayTabs payment gateway. Please try PayPal or Bank Transfer as an alternative, or try again later.');
-    }
+    paytabsMutation.mutate({
+      amount: totalAmount,
+      cartId,
+      description: orderDescription,
+      customerName: formData.name,
+      customerEmail: formData.email,
+      customerPhone: formData.phone,
+      customerCountry: formData.country || 'JO',
+      returnUrl,
+    });
   };
 
   // ── PayPal ──

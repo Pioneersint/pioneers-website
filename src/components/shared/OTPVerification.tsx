@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Mail, Loader2, Check, AlertCircle, Send, Eye, EyeOff } from 'lucide-react';
+import { ShieldCheck, Mail, Loader2, Check, AlertCircle, Send } from 'lucide-react';
+import { trpc } from '@/providers/trpc';
 
 interface OTPVerificationProps {
   email: string;
@@ -8,54 +9,48 @@ interface OTPVerificationProps {
   isVerified: boolean;
 }
 
-function generateOTP(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-async function simulateSendOTP(_email: string): Promise<string> {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const otp = generateOTP();
-      resolve(otp);
-    }, 1500);
-  });
-}
-
 export default function OTPVerification({ email, onVerified, isVerified }: OTPVerificationProps) {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [generatedOTP, setGeneratedOTP] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const [timer, setTimer] = useState(0);
   const [otpSent, setOtpSent] = useState(false);
-  const [showOtp, setShowOtp] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  // tRPC mutations
+  const sendOtpMutation = trpc.otp.send.useMutation({
+    onSuccess: () => {
+      setOtpSent(true);
+      setTimer(60);
+      setOtp(['', '', '', '', '', '']);
+      setTimeout(() => inputRefs.current[0]?.focus(), 100);
+    },
+    onError: (err) => {
+      setError(err.message || 'Failed to send OTP. Please try again.');
+    },
+  });
+
+  const verifyOtpMutation = trpc.otp.verify.useMutation({
+    onSuccess: () => {
+      setError('');
+      onVerified(true);
+    },
+    onError: (err) => {
+      setError(err.message || 'Invalid OTP. Please try again.');
+      setOtp(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
+    },
+  });
+
+  // Countdown timer
   useEffect(() => {
     if (timer <= 0) return;
     const interval = setInterval(() => setTimer(t => t - 1), 1000);
     return () => clearInterval(interval);
   }, [timer]);
 
-  const handleSendOTP = async () => {
+  const handleSendOTP = () => {
     setError('');
-    setSending(true);
-    setShowOtp(false);
-    try {
-      const otpCode = await simulateSendOTP(email);
-      setGeneratedOTP(otpCode);
-      setOtpSent(true);
-      setTimer(60);
-      setOtp(['', '', '', '', '', '']);
-      setTimeout(() => inputRefs.current[0]?.focus(), 100);
-      // Auto-show OTP after 2 seconds for demo
-      setTimeout(() => setShowOtp(true), 2000);
-    } catch {
-      setError('Failed to send OTP. Please try again.');
-    } finally {
-      setSending(false);
-    }
+    sendOtpMutation.mutate({ email });
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -72,22 +67,13 @@ export default function OTPVerification({ email, onVerified, isVerified }: OTPVe
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) inputRefs.current[index - 1]?.focus();
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
   };
 
   const verifyOtp = (fullOtp: string) => {
-    setLoading(true);
-    setTimeout(() => {
-      if (fullOtp === generatedOTP) {
-        setError('');
-        onVerified(true);
-      } else {
-        setError('Invalid OTP. Please check and try again.');
-        setOtp(['', '', '', '', '', '']);
-        inputRefs.current[0]?.focus();
-      }
-      setLoading(false);
-    }, 800);
+    verifyOtpMutation.mutate({ email, code: fullOtp });
   };
 
   const handleVerify = () => {
@@ -111,32 +97,18 @@ export default function OTPVerification({ email, onVerified, isVerified }: OTPVe
     );
   }
 
+  const isLoading = sendOtpMutation.isPending || verifyOtpMutation.isPending;
+
   return (
     <div className="space-y-3">
       {!otpSent ? (
-        <button type="button" onClick={handleSendOTP} disabled={sending}
+        <button type="button" onClick={handleSendOTP} disabled={isLoading}
           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-navy/5 border border-navy/20 text-navy rounded-lg text-sm font-medium hover:bg-navy/10 transition-all disabled:opacity-50">
-          {sending ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending verification code...</>
+          {sendOtpMutation.isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
             : <><Mail className="w-4 h-4" /> Send Verification Code to {email}</>}
         </button>
       ) : (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          {/* OTP Code Display - Demo Mode */}
-          {showOtp && generatedOTP && (
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-              className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 text-center">
-              <p className="text-xs text-amber-700 font-medium mb-1 uppercase tracking-wide">Your Verification Code</p>
-              <div className="flex items-center justify-center gap-2">
-                <p className="text-3xl font-bold text-amber-800 tracking-[0.3em] font-mono">{generatedOTP}</p>
-                <button type="button" onClick={() => setShowOtp(!showOtp)} className="text-amber-500 hover:text-amber-700">
-                  {showOtp ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              <p className="text-[10px] text-amber-600 mt-1">Enter this code below to verify your email</p>
-            </motion.div>
-          )}
-
-          {/* OTP Input */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">Enter 6-digit verification code</label>
             <div className="flex items-center gap-2 justify-center">
@@ -160,13 +132,14 @@ export default function OTPVerification({ email, onVerified, isVerified }: OTPVe
           </AnimatePresence>
 
           <div className="flex items-center gap-3">
-            <button type="button" onClick={handleVerify} disabled={loading || otp.join('').length !== 6}
+            <button type="button" onClick={handleVerify} disabled={isLoading || otp.join('').length !== 6}
               className="flex items-center gap-2 px-5 py-2.5 bg-emerald text-white rounded-lg text-sm font-semibold hover:bg-emerald-dark transition-all disabled:opacity-50">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+              {verifyOtpMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
               Verify Code
             </button>
+
             {timer > 0 ? <span className="text-xs text-slate-400">Resend in {timer}s</span>
-              : <button type="button" onClick={handleSendOTP} disabled={sending}
+              : <button type="button" onClick={handleSendOTP} disabled={isLoading}
                 className="flex items-center gap-1 text-xs text-navy font-medium hover:underline disabled:opacity-50">
                 <Send className="w-3 h-3" /> Resend Code
               </button>}

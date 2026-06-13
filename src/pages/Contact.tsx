@@ -5,6 +5,7 @@ import { MapPin, Phone, Mail, Send, CheckCircle, ChevronDown, AlertCircle } from
 import SectionHeading from '@/components/shared/SectionHeading';
 import AnimatedSection from '@/components/shared/AnimatedSection';
 import { getEmailError, getPhoneError } from '@/lib/validation';
+import { trpc } from '@/providers/trpc';
 
 interface FormErrors {
   name?: string;
@@ -67,24 +68,26 @@ export default function Contact() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // tRPC mutation for contact form
+  const contactMutation = trpc.contact.submit.useMutation({
+    onSuccess: () => {
+      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({ name: '', email: '', phone: '', company: '', service: '', message: '' });
+        setTouched({});
+        setErrors({});
+      }, 5000);
+    },
+    onError: (err) => {
+      setErrors(prev => ({ ...prev, submit: err.message }));
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateAll()) return;
-
-    // Send email
-    const subject = encodeURIComponent('Contact Form: ' + (formData.service || 'General Inquiry'));
-    const body = encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone || 'N/A'}\nCompany: ${formData.company || 'N/A'}\nService: ${formData.service || 'General'}\n\nMessage:\n${formData.message}`
-    );
-    window.location.href = `mailto:info@pioneersint.com?subject=${subject}&body=${body}`;
-
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', email: '', phone: '', company: '', service: '', message: '' });
-      setTouched({});
-      setErrors({});
-    }, 5000);
+    contactMutation.mutate(formData);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

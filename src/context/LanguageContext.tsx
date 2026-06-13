@@ -17,24 +17,54 @@ const LanguageContext = createContext<LanguageContextType>({
   setLanguage: () => {},
 });
 
+const STORAGE_KEY = 'pioneers-language';
+
+function getSavedLanguage(): Language {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'ar' || saved === 'en') return saved;
+  } catch { /* localStorage not available */ }
+  return 'en';
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLang] = useState<Language>('en');
+  const [language, setLang] = useState<Language>(getSavedLanguage);
   const direction = language === 'ar' ? 'rtl' : 'ltr';
 
+  // Sync document direction and lang attribute whenever language changes
   useEffect(() => {
     document.documentElement.dir = direction;
     document.documentElement.lang = language;
   }, [direction, language]);
 
+  // Listen to i18n language changes (from external sources) to keep context in sync
+  useEffect(() => {
+    const handleLanguageChanged = (lng: string) => {
+      if (lng === 'en' || lng === 'ar') {
+        setLang(lng as Language);
+      }
+    };
+    i18n.on('languageChanged', handleLanguageChanged);
+    return () => {
+      i18n.off('languageChanged', handleLanguageChanged);
+    };
+  }, []);
+
   const toggleLanguage = useCallback(() => {
     const newLang = language === 'en' ? 'ar' : 'en';
     setLang(newLang);
     i18n.changeLanguage(newLang);
+    try {
+      localStorage.setItem(STORAGE_KEY, newLang);
+    } catch { /* localStorage not available */ }
   }, [language]);
 
   const setLanguage = useCallback((lang: Language) => {
     setLang(lang);
     i18n.changeLanguage(lang);
+    try {
+      localStorage.setItem(STORAGE_KEY, lang);
+    } catch { /* localStorage not available */ }
   }, []);
 
   return (
