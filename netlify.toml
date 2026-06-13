@@ -5,11 +5,14 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# IMPORTANT: API redirects must come BEFORE SPA fallback
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
+  force = true
 
+# SPA fallback - must be LAST
 [[redirects]]
   from = "/*"
   to = "/index.html"
