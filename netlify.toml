@@ -5,6 +5,12 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Shadow function paths so they're served directly, not caught by SPA rewrite
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
 # API endpoints rewritten to Functions
 [[redirects]]
   from = "/api/*"
@@ -12,7 +18,7 @@
   status = 200
   force = true
 
-# SPA fallback - must be last
+# SPA fallback - must be last, no force so files/functions shadow it
 [[redirects]]
   from = "/*"
   to = "/index.html"
