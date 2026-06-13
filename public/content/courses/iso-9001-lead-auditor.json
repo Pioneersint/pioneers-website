@@ -1,0 +1,45 @@
+{
+  "slug": "iso-9001-lead-auditor",
+  "title": "ISO 9001:2015 Lead Auditor Certification",
+  "title_ar": "شهادة مدقق رئيسي ISO 9001:2015",
+  "code": "ISO-9001-LA",
+  "category": "ISO Certification",
+  "level": "Advanced",
+  "duration": "40 Hours",
+  "duration_ar": "40 ساعة",
+  "price": 1200,
+  "currency": "USD",
+  "short_description": "Master ISO 9001 quality management auditing. Gain internationally recognized lead auditor certification through intensive training and examination.",
+  "short_description_ar": "أتقن تدقيق إدارة الجودة ISO 9001. احصل على شهادة مدقق رئيسي معترف بها دولياً من خلال تدريب مكثف وامتحان.",
+  "body": "## Course Overview\n\nThis comprehensive course prepares professionals to become certified ISO 9001:2015 Lead Auditors.\n\n## Learning Outcomes\n- Understand the ISO 9001:2015 standard requirements\n- Plan, conduct, report and follow up audits\n- Lead audit teams effectively\n- Evaluate corrective actions",
+  "body_ar": "## نظرة عامة\nتعد هذه الدورة المتكاملة المحترفين ليصبحوا مدققين رئيسيين معتمدين في ISO 9001:2015.\n\n## نتائج التعلم\n- فهم متطلبات معيار ISO 9001:2015\n- تخطيط وإجراء وإبلاغ ومتابعة التدقيق\n- قيادة فرق التدقيق بفعالية\n- تقييم الإجراءات التصحيحية",
+  "objectives": [
+    "Understand ISO 9001:2015 requirements",
+    "Master audit planning and execution",
+    "Lead audit teams effectively",
+    "Write professional audit reports"
+  ],
+  "objectives_ar": [
+    "فهم متطلبات ISO 9001:2015",
+    "إتقان تخطيط وإجراء التدقيق",
+    "قيادة فرق التدقيق بفعالية",
+    "كتابة تقارير تدقيق احترافية"
+  ],
+  "target_audience": [
+    "Quality Managers",
+    "Management Representatives",
+    "Internal Auditors",
+    "Consultants"
+  ],
+  "target_audience_ar": [
+    "مديرو الجودة",
+    "ممثلو الإدارة",
+    "المدققون الداخليون",
+    "الاستشاريون"
+  ],
+  "image": "/assets/images/iso-training.jpg",
+  "featured": true,
+  "published": true,
+  "instructor": "Dr. Ahmad Khalil",
+  "date": "2026-06-01T00:00:00.000Z"
+}

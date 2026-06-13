@@ -1,0 +1,41 @@
+{
+  "slug": "esg-fundamentals",
+  "title": "ESG Fundamentals & Sustainability Reporting",
+  "title_ar": "أساسيات ESG والتقارير الاستدامة",
+  "code": "ESG-101",
+  "category": "ESG & Sustainability",
+  "level": "Beginner",
+  "duration": "24 Hours",
+  "duration_ar": "24 ساعة",
+  "price": 750,
+  "currency": "USD",
+  "short_description": "Introduction to Environmental, Social, and Governance principles. Learn GRI, SASB, and TCFD frameworks.",
+  "short_description_ar": "مقدمة في مبادئ البيئة والمجتمع والحوكمة. تعلم أطر GRI وSASB وTCFD.",
+  "body": "## Course Overview\nFoundational course introducing core ESG and sustainability concepts.\n\n## Learning Outcomes\n- Understand ESG fundamentals\n- Navigate major reporting frameworks\n- Develop materiality assessments",
+  "body_ar": "## نظرة عامة\nدورة أساسية تقدم مفاهيم ESG والاستدامة الأساسية.\n\n## نتائج التعلم\n- فهم أساسيات ESG\n- التنقل بين أطر التقارير الرئيسية\n- تطوير تقييمات المادية",
+  "objectives": [
+    "Define ESG core concepts",
+    "Compare GRI, SASB, TCFD frameworks",
+    "Conduct stakeholder analysis"
+  ],
+  "objectives_ar": [
+    "تعريف مفاهيم ESG الأساسية",
+    "مقارنة أطر GRI وSASB وTCFD",
+    "إجراء تحليل أصحاب المصلحة"
+  ],
+  "target_audience": [
+    "Sustainability Officers",
+    "CSR Managers",
+    "Board Members"
+  ],
+  "target_audience_ar": [
+    "مسؤولو الاستدامة",
+    "مديرو المسؤولية الاجتماعية",
+    "أعضاء مجلس الإدارة"
+  ],
+  "image": "/assets/images/esg-premium.jpg",
+  "featured": true,
+  "published": true,
+  "instructor": "Dr. Rania Hussein",
+  "date": "2026-06-01T00:00:00.000Z"
+}

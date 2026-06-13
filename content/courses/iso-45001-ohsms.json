@@ -1,0 +1,41 @@
+{
+  "slug": "iso-45001-ohsms",
+  "title": "ISO 45001 Occupational Health & Safety",
+  "title_ar": "الصحة والسلامة المهنية ISO 45001",
+  "code": "ISO-45001-OHSMS",
+  "category": "ISO Certification",
+  "level": "Advanced",
+  "duration": "40 Hours",
+  "duration_ar": "40 ساعة",
+  "price": 1100,
+  "currency": "USD",
+  "short_description": "Comprehensive training on ISO 45001:2018 OHS Management Systems.",
+  "short_description_ar": "تدريب شامل على نظام إدارة الصحة والسلامة المهنية ISO 45001:2018.",
+  "body": "## Course Overview\nCovers the complete ISO 45001:2018 standard for occupational health and safety.\n\n## Learning Outcomes\n- Master ISO 45001:2018 requirements\n- Conduct hazard identification and risk assessment\n- Develop OHSMS documentation",
+  "body_ar": "## نظرة عامة\nيغطي معيار ISO 45001:2018 الكامل للصحة والسلامة المهنية.\n\n## نتائج التعلم\n- إتقان متطلبات ISO 45001:2018\n- إجراء تحديد المخاطر وتقييمها\n- تطوير وثائق OHSMS",
+  "objectives": [
+    "Understand ISO 45001:2018 structure",
+    "Conduct risk assessments",
+    "Design safety management programs"
+  ],
+  "objectives_ar": [
+    "فهم هيكل ISO 45001:2018",
+    "إجراء تقييمات المخاطر",
+    "تصميم برامج إدارة السلامة"
+  ],
+  "target_audience": [
+    "HSE Managers",
+    "Safety Officers",
+    "Operations Directors"
+  ],
+  "target_audience_ar": [
+    "مديرو السلامة",
+    "ضباط السلامة",
+    "مديرو العمليات"
+  ],
+  "image": "/assets/images/iso-training.jpg",
+  "featured": false,
+  "published": true,
+  "instructor": "Dr. Khaled Morsi",
+  "date": "2026-06-01T00:00:00.000Z"
+}

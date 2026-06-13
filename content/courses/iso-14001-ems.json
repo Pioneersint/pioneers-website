@@ -1,0 +1,41 @@
+{
+  "slug": "iso-14001-ems",
+  "title": "ISO 14001 Environmental Management System",
+  "title_ar": "نظام إدارة البيئة ISO 14001",
+  "code": "ISO-14001-EMS",
+  "category": "ISO Certification",
+  "level": "Intermediate",
+  "duration": "32 Hours",
+  "duration_ar": "32 ساعة",
+  "price": 950,
+  "currency": "USD",
+  "short_description": "Develop expertise in environmental management systems aligned with ISO 14001:2015.",
+  "short_description_ar": "طور خبرتك في أنظمة إدارة البيئة المتوافقة مع ISO 14001:2015.",
+  "body": "## Course Overview\nLearn to implement an Environmental Management System according to ISO 14001:2015.\n\n## Learning Outcomes\n- Understand ISO 14001:2015 requirements\n- Identify environmental aspects and impacts\n- Develop environmental management programs",
+  "body_ar": "## نظرة عامة\nتعلم كيفية تنفيذ نظام إدارة البيئة وفقاً لـ ISO 14001:2015.\n\n## نتائج التعلم\n- فهم متطلبات ISO 14001:2015\n- تحديد الجوانب البيئية والتأثيرات\n- تطوير برامج إدارة البيئة",
+  "objectives": [
+    "Master ISO 14001:2015 clauses",
+    "Conduct environmental aspects assessment",
+    "Design EMS implementation roadmap"
+  ],
+  "objectives_ar": [
+    "إتقان بنود ISO 14001:2015",
+    "إجراء تقييم الجوانب البيئية",
+    "تصميم خارطة طريق تنفيذ EMS"
+  ],
+  "target_audience": [
+    "Environmental Managers",
+    "HSE Officers",
+    "Operations Managers"
+  ],
+  "target_audience_ar": [
+    "مديرو البيئة",
+    "ضباط السلامة والصحة",
+    "مديرو العمليات"
+  ],
+  "image": "/assets/images/esg-premium.jpg",
+  "featured": true,
+  "published": true,
+  "instructor": "Eng. Sarah Al-Masri",
+  "date": "2026-06-01T00:00:00.000Z"
+}

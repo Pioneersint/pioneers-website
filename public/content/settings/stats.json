@@ -1,0 +1,8 @@
+{
+  "stats": [
+    { "value": "500+", "label_en": "Clients Served", "label_ar": "عميل" },
+    { "value": "30+", "label_en": "Years Experience", "label_ar": "سنة خبرة" },
+    { "value": "8", "label_en": "Countries", "label_ar": "دول" },
+    { "value": "50+", "label_en": "Certified Courses", "label_ar": "دورة معتمدة" }
+  ]
+}

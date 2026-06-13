@@ -1,0 +1,12 @@
+{
+  "slug": "iso-certification",
+  "title": "ISO Certification",
+  "title_ar": "شهادات الأيزو",
+  "icon": "Shield",
+  "short_description": "Full support for ISO 9001, 14001, 45001, 27001 certification from gap analysis to final audit.",
+  "short_description_ar": "دعم كامل لشهادات ISO 9001 و14001 و45001 و27001 من تحليل الفجوات إلى التدقيق النهائي.",
+  "body": "## ISO Certification Services\n\nWe provide end-to-end ISO certification consulting including:\n\n- Gap Analysis\n- Documentation Development\n- Implementation Support\n- Internal Auditor Training\n- Pre-assessment Audits\n- Certification Body Liaison",
+  "body_ar": "## خدمات شهادات الأيزو\n\nنقدم استشارات شهادات الأيزو الشاملة بما في ذلك:\n\n- تحليل الفجوات\n- تطوير الوثائق\n- دعم التنفيذ\n- تدريب المدققين الداخليين\n- عمليات تدقيق ما قبل التقييم\n- التنسيق مع جهة الاعتماد",
+  "featured": true,
+  "order": 1
+}

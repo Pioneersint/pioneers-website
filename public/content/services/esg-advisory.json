@@ -1,0 +1,12 @@
+{
+  "slug": "esg-advisory",
+  "title": "ESG Advisory",
+  "title_ar": "استشارات الاستدامة",
+  "icon": "Leaf",
+  "short_description": "ESG strategy development, sustainability reporting, and compliance with international frameworks.",
+  "short_description_ar": "تطوير استراتيجية ESG وتقارير الاستدامة والامتثال للأطر الدولية.",
+  "body": "## ESG Advisory Services\n\nOur ESG services include:\n\n- ESG Strategy Development\n- Materiality Assessment\n- Sustainability Reporting (GRI, SASB, TCFD)\n- Carbon Footprint Analysis\n- Stakeholder Engagement\n- ESG Performance Metrics",
+  "body_ar": "## خدمات استشارات الاستدامة\n\nتشمل خدمات ESG لدينا:\n\n- تطوير استراتيجية ESG\n- تقييم المادية\n- تقارير الاستدامة (GRI, SASB, TCFD)\n- تحليل البصمة الكربونية\n- مشاركة أصحاب المصلحة\n- مؤشرات أداء ESG",
+  "featured": true,
+  "order": 2
+}

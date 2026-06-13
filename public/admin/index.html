@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pioneers CMS — Content Management</title>
+  <link rel="stylesheet" href="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.css" />
+  <style>
+    :root {
+      --primary: #0F4C81;
+      --primary-light: #1A5A9E;
+      --accent: #E8AF3E;
+    }
+    [data-slate-editor] {
+      background: #fff !important;
+    }
+    .css-1f3mf5r-StyledAppHeader,
+    .css-1r1yd1j-StyledNavbarContainer {
+      background: var(--primary) !important;
+    }
+    .css-1f3mf5r-StyledAppHeader a,
+    .css-1r1yd1j-StyledNavbarContainer a {
+      color: #fff !important;
+    }
+    .css-1f3mf5r-StyledAppHeader button {
+      background: var(--accent) !important;
+      color: #0F2B4C !important;
+    }
+  </style>
+</head>
+<body>
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    CMS.init();
+  </script>
+</body>
+</html>
