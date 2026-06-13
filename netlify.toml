@@ -5,18 +5,16 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# IMPORTANT: API redirects must come BEFORE SPA fallback
+# API Functions - highest priority
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
   force = true
 
-# SPA fallback - must be LAST
+# SPA fallback - lowest priority  
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-[context.production.environment]
-  NODE_ENV = "production"
+  conditions = {Role = ["admin"]}
