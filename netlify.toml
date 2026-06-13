@@ -1,6 +1,7 @@
 [build]
   publish = "dist/public"
   functions = "netlify/functions"
+  command = "echo 'Using pre-built dist/public. Functions bundled automatically.'"
 
 [build.environment]
   NODE_VERSION = "20"
