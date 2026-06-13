@@ -5,20 +5,14 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# API endpoints - FORCE before SPA
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-  force = true
-
+# API endpoints rewritten to Functions
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
   force = true
 
-# SPA - must be last, no force
+# SPA fallback - must be last
 [[redirects]]
   from = "/*"
   to = "/index.html"
